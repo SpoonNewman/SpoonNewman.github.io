@@ -4,8 +4,6 @@ layout: default
 
 <link rel="stylesheet" href="/assets/style.css">
 
-<link rel="stylesheet" href="/assets/style.css">
-
 <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle theme">
   🌙 Dark
 </button>
@@ -16,10 +14,7 @@ layout: default
     const btn = document.getElementById("themeToggle");
     if (!btn) return;
 
-    // Determine system preference
     const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-
-    // Apply stored theme or system default
     const stored = localStorage.getItem(key);
     const initial = stored || (prefersDark ? "dark" : "light");
     document.documentElement.setAttribute("data-theme", initial);
@@ -41,18 +36,17 @@ layout: default
 
 <script src="/assets/easter-egg.js"></script>
 
-
 # Rease Kessler
 
-> I build projects to learn and explore ideas. While, I continue developing my skills to aid in proficiently wiritng software
+> I build projects to learn, explore ideas, and get better at writing software.
 
 ## About
 
-I build tools and projects that help me learn, by doing. My recent work includes a Rust-based CLI tool, infrastructure experiments with Terraform and cloud APIs, and side explorations in C#. I enjoy digging into systems, discovering how things work under the hood, and gaining experience across languages and environments.
+I build tools and projects that help me learn by doing. My recent work includes a Rust-based CLI tool, infrastructure experiments with Terraform and cloud APIs, and side explorations in C#. I enjoy digging into systems, understanding how things work under the hood, and gaining experience across different languages and environments.
 
 **Note:** At this time, while I still hold a passion for writing software, I am pursuing a separate career path.
 
-> This site is a rudimentary place to show some of my most interesting projects and to exhibit my foundation of knowledge.
+> This site is a simple place to highlight a few projects and share what I’m learning.
 
 ## Projects
 
