@@ -23,22 +23,22 @@ This site is a simple place to show of some of my most interesting projects, and
 ## Drone-CLI
 This repository is a tandem effort with a close friend. I was tasked with the job of making a CLI tool to interact with a drone over an API. This is still in development, while the development is slow, it is active.
 **Tech: Rust**
-[Drone-CLI](https://github.com/SpoonNewman/drone-cli.git)
+### [Drone-CLI](https://github.com/SpoonNewman/drone-cli.git)
 
 ## Invincible
 This repository was my attempt at making an Invincible fan game. It didn't get too far, and had a massive amount of problems
 **Tech: C#, Wolfram, Unity**
-[Invincible](https://github.com/SpoonNewman/Invincible.git)
+### [Invincible](https://github.com/SpoonNewman/Invincible.git)
 
 ### The-Box
 This repository was created to learn and practice Terraform.   
 **Tech: AWS, Terraform, Python, Docker**   
-[The-Box](https://github.com/SpoonNewman/The-Box.git)
+### [The-Box](https://github.com/SpoonNewman/The-Box.git)
 
 ### Developer-Workspace
 This was my original repository when I first began learning how to write code.  
 **Tech: Python, Powershell**  
-[Developer-Workspace](https://github.com/SpoonNewman/Developer-Workspace.git)
+### [Developer-Workspace](https://github.com/SpoonNewman/Developer-Workspace.git)
 
 ## Currently Interested In
 
