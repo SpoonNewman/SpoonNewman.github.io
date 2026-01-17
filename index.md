@@ -21,7 +21,7 @@ This site is a simple place to show of some of my most interesting projects, and
 ## Projects
 
 ## Drone-CLI
-This repositort is a tandem effort with a close friend. I was tasked with the job of making a CLI tool to interact with a drone over an API. This is still in development, while the development is slow, it is active.
+This repository is a tandem effort with a close friend. I was tasked with the job of making a CLI tool to interact with a drone over an API. This is still in development, while the development is slow, it is active.
 **Tech: Rust**
 [Drone-CLI](https://github.com/SpoonNewman/drone-cli.git)
 

@@ -27,6 +27,12 @@ h2 {
   padding-bottom: 0.25rem;
 }
 
+h3 {
+  margin-top: 3rem;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.25rem;
+}
+
 /* Links */
 a {
   color: #2563eb;
