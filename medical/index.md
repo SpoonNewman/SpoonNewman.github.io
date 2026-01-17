@@ -60,3 +60,4 @@ layout: default
 - (LinkedIn)
 - (Email)
 - (Anything relevant)
+- [Developer](https://www.rease.dev)
