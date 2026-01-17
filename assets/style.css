@@ -14,6 +14,12 @@
   --maxw: 720px;
 }
 
+/* Easter egg tiny effect */
+html.egg {
+  filter: hue-rotate(140deg);
+}
+
+
 /* Manual theme override via data-theme on <html> */
 html[data-theme="light"] {
   --bg: #ffffff;

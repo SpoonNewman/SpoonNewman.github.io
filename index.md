@@ -39,14 +39,16 @@ layout: default
   })();
 </script>
 
+<script src="/assets/easter-egg.js"></script>
+
 
 # Rease Kessler
 
-> I build projects to learn, explore ideas, and get better at writing software.
+> I build projects to learn, explore ideas. While, I continue developing my skills to aid in proficiently wiritng software
 
 ## About
 
-I build tools and projects that help me learn by doing. My recent work includes a Rust-based CLI tool, infrastructure experiments with Terraform and cloud APIs, and side explorations in C#. I enjoy digging into systems, discovering how things work under the hood, and gaining experience across languages and environments.
+I build tools and projects that help me learn, by doing. My recent work includes a Rust-based CLI tool, infrastructure experiments with Terraform and cloud APIs, and side explorations in C#. I enjoy digging into systems, discovering how things work under the hood, and gaining experience across languages and environments.
 
 **Note:** At this time, while I still hold a passion for writing software, I am pursuing a separate career path.
 
