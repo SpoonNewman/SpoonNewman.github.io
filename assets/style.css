@@ -28,9 +28,9 @@ h2 {
 }
 
 h3 {
-  margin-top: 3rem;
-  border-bottom: 1px solid #e5e7eb;
-  padding-bottom: 0.25rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 2.5rem;
 }
 
 /* Links */
