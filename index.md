@@ -1,3 +1,10 @@
+---
+layout: default
+---
+
+<link rel="stylesheet" href="/assets/style.css">
+
+
 # Rease Kessler
 
 Software Engineer  
@@ -30,5 +37,5 @@ This was my original repository when I first began learning how to write code.
 
 ## Links
 
-- GitHub: https://github.com/spoonnewman
+- [GitHub]: (https://github.com/spoonnewman)
 - Email: reasekessler@gmail.com
