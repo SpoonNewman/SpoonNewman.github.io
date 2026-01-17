@@ -7,13 +7,14 @@ layout: default
 
 # Rease Kessler
 
-Software Engineer  
+Junior Software Engineer  
 Interested in building fast, reliable systems and learning new technologies.
 
 ## About
 
-I’m a software engineer with experience across multiple projects and technologies.
+I’m a junior software engineer with experience across multiple projects and technologies.
 I enjoy working on problems that involve performance, correctness, and thoughtful design.
+At this time, while I still hold a passion for writing software, I am pursuing a separate career path.
 
 This site is a simple place to collect some of my work and point to things I’ve built.
 
@@ -37,5 +38,5 @@ This was my original repository when I first began learning how to write code.
 
 ## Links
 
-- [GitHub]: (https://github.com/spoonnewman)
-- Email: reasekessler@gmail.com
+## - [GitHub](https://github.com/spoonnewman)
+## - Email: rease.dev.h42dk@passmail.net
