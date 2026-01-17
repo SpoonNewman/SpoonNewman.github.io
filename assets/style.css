@@ -125,7 +125,11 @@ p strong {
   font-size: 0.95em;
 }
 
-/*highlight the whole tech line a tiny bit if it's on its own paragraph */
+/* Emphasized note blocks */
+p strong:first-child {
+  color: var(--accent);
+}
+
 p:has(strong) {
   /* Only applies in browsers that support :has(). If not supported, it just does nothing. */
   padding: 0.25rem 0.5rem;

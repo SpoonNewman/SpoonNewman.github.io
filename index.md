@@ -6,15 +6,15 @@ layout: default
 
 # Rease Kessler
 
-> Junior Software Engineer — interested in building fast, reliable systems and learning new technologies.
+> I build projects to learn, explore ideas, and get better at writing software.
 
 ## About
 
-I’m a junior software engineer with experience across multiple projects and technologies.
-I enjoy working on problems that involve performance, correctness, and thoughtful design.
-At this time, while I still hold a passion for writing software, I am pursuing a separate career path.
+I build tools and projects that help me learn by doing. My recent work includes a Rust-based CLI tool, infrastructure experiments with Terraform and cloud APIs, and side explorations in C#. I enjoy digging into systems, discovering how things work under the hood, and gaining experience across languages and environments.
 
-This site is a simple place to show some of my most interesting projects and to point to my foundation of knowledge.
+**Note:** At this time, while I still hold a passion for writing software, I am pursuing a separate career path.
+
+> This site is a simple place to show some of my most interesting projects and to point to my foundation of knowledge.
 
 ## Projects
 
