@@ -44,7 +44,7 @@ layout: default
 
 # Rease Kessler
 
-> I build projects to learn, explore ideas. While, I continue developing my skills to aid in proficiently wiritng software
+> I build projects to learn and explore ideas. While, I continue developing my skills to aid in proficiently wiritng software
 
 ## About
 
@@ -52,7 +52,7 @@ I build tools and projects that help me learn, by doing. My recent work includes
 
 **Note:** At this time, while I still hold a passion for writing software, I am pursuing a separate career path.
 
-> This site is a simple place to show some of my most interesting projects and to point to my foundation of knowledge.
+> This site is a rudimentary place to show some of my most interesting projects and to exhibit my foundation of knowledge.
 
 ## Projects
 
