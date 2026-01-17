@@ -6,9 +6,11 @@ body {
   max-width: 720px;
   margin: 4rem auto;
   padding: 0 1.25rem;
-  color: #1f2937;
-  background-color: #ffffff;
+
+  background-color: #0f172a; /* deep slate */
+  color: #e5e7eb;            /* soft white */
 }
+
 
 /* Headings */
 h1, h2, h3 {
@@ -23,8 +25,9 @@ h1 {
 
 h2 {
   margin-top: 3rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #334155;
   padding-bottom: 0.25rem;
+  font-size: 1.75rem;
 }
 
 h3 {
@@ -33,9 +36,13 @@ h3 {
   margin-top: 2.5rem;
 }
 
+p {
+  color: #d1d5db;
+}
+
 /* Links */
 a {
-  color: #2563eb;
+  color: #60a5fa; /* soft blue */
   text-decoration: none;
 }
 
