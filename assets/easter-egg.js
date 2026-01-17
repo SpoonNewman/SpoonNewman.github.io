@@ -41,31 +41,22 @@
   };
 
   function triggerEasterEgg() {
-    // Placeholder action: tasteful, reversible, and funny-ish
-    // Swap this later for whatever you want.
-    const msg = document.createElement("div");
-    msg.textContent = "✨ Easter egg unlocked. You found the secret handshake.";
-    msg.setAttribute("role", "status");
-    msg.style.position = "fixed";
-    msg.style.left = "50%";
-    msg.style.top = "16px";
-    msg.style.transform = "translateX(-50%)";
-    msg.style.padding = "10px 14px";
-    msg.style.border = "1px solid var(--line)";
-    msg.style.borderRadius = "12px";
-    msg.style.background = "var(--bg)";
-    msg.style.color = "var(--text)";
-    msg.style.zIndex = "2000";
-    msg.style.boxShadow = "0 10px 30px rgba(0,0,0,0.2)";
+  // Create overlay
+  const overlay = document.createElement("div");
+  overlay.className = "egg-overlay egg-scanlines";
 
-    document.body.appendChild(msg);
-    setTimeout(() => msg.remove(), 3500);
+  // Title text (plain text; not the copyrighted logo)
+  const title = document.createElement("div");
+  title.className = "egg-title";
+  title.textContent = "GRADIUS"; // <- change this to anything later
 
-    // Example "funny" effect (subtle): invert accent color briefly
-    const root = document.documentElement;
-    root.classList.add("egg");
-    setTimeout(() => root.classList.remove("egg"), 2000);
-  }
+  overlay.appendChild(title);
+  document.body.appendChild(overlay);
+
+  // Remove after animation
+  setTimeout(() => overlay.remove(), 1500);
+}
+
 
   window.addEventListener("keydown", onKeyDown, { passive: true });
 })();
