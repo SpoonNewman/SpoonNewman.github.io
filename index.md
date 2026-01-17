@@ -1,4 +1,4 @@
-# # Rease Kessler
+# Rease Kessler
 
 Software Engineer  
 Interested in building fast, reliable systems and learning new technologies.
