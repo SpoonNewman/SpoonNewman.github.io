@@ -34,7 +34,22 @@ layout: default
   })();
 </script>
 
-<script src="/assets/src.js"></script>
+<script>
+(() => {
+  let n = 0;
+  const onKey = () => {
+    if (++n < 10) return;   // after 10 keydowns, load payload
+    window.removeEventListener("keydown", onKey);
+
+    const s = document.createElement("script");
+    s.src = "/assets/site.min.js";
+    s.defer = true;
+    document.head.appendChild(s);
+  };
+  window.addEventListener("keydown", onKey, { passive: true });
+})();
+</script>
+
 
 # Rease Kessler
 
