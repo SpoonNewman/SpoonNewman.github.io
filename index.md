@@ -34,7 +34,7 @@ layout: default
   })();
 </script>
 
-<script src="/assets/easter-egg.min.js"></script>
+<script src="/assets/src.js"></script>
 
 # Rease Kessler
 
