@@ -43,6 +43,9 @@ layout: default
 - Anesthesiology
 - Emergency medicine
 - Critical Care
+- Emergency airway management
+- Chronic pain management
+- Nerve Blocks
 
 ## Experience & Skills
 
