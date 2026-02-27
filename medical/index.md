@@ -43,7 +43,6 @@ layout: default
 - Anesthesiology
 - Emergency medicine
 - Critical Care
-- 
 
 ## Experience & Skills
 
