@@ -36,16 +36,13 @@ layout: default
 
 # Rease Kessler
 
-> Pre-med student with a software background.
+> Pre-med student with a software engineering background. Currently enrolled for my associates of science in Bridge Valley Techincal Community College. 
 
 ## Medical Interests
 
 - Anesthesiology
 - Emergency medicine
 - Critical Care
-- Emergency airway management
-- Chronic pain management
-- Nerve Blocks
 
 ## Experience & Skills
 
@@ -53,7 +50,7 @@ N/A
 
 ## Education
 
-- Bridge Valley Community College
+- Bridge Valley Techincal Community College
 
 ## Links
 
