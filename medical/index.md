@@ -36,7 +36,7 @@ layout: default
 
 # Rease Kessler
 
-> Pre-med student with a software engineering background. Currently enrolled for my associates of science in Bridge Valley Techincal Community College. 
+> Pre-med student with a software engineering background. Currently enrolled for an associates of science in Bridge Valley Techincal Community College, and plan to transfer to WVU to get a Bachelors degree in Biology.
 
 ## Medical Interests
 
