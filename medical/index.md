@@ -43,6 +43,7 @@ layout: default
 - Anesthesiology
 - Emergency medicine
 - Critical Care
+- Chronic Pain Management
 
 ## Experience & Skills
 
