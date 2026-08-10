@@ -338,7 +338,7 @@ main > h1 + blockquote p {
   max-width: calc(var(--maxw) + 3rem);
   height: 22rem;
   background: url("/assets/art/hero.webp") center / cover no-repeat;
-  opacity: 0.12;
+  opacity: 0.16;
   border-radius: 16px;
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 16%, black 72%, transparent 100%);
   mask-image: linear-gradient(to bottom, transparent 0%, black 16%, black 72%, transparent 100%);
@@ -377,14 +377,14 @@ html[data-theme="dark"] .hero-art-bg {
   transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
 }
 
-/* Art underlay inside project cards (same "layer below text" treatment) */
+/* Art underlay inside project cards (each card gets its own via --card-art) */
 .card::before {
   content: "";
   position: absolute;
   z-index: -1;
   inset: 0;
-  background: url("/assets/art/hero.webp") center / cover no-repeat;
-  opacity: 0.08;
+  background: var(--card-art, url("/assets/art/hero.webp")) center / cover no-repeat;
+  opacity: 0.13;
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 60%);
   mask-image: linear-gradient(to right, transparent 0%, black 60%);
   pointer-events: none;

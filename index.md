@@ -24,25 +24,25 @@ I build tools and projects that help me learn by doing. My recent work includes 
 
 ## Projects
 
-<div class="card">
+<div class="card" style="--card-art: url('/assets/art/card-b.webp')">
   <h3><a href="https://github.com/SpoonNewman/drone-cli.git">Drone-CLI</a> <span class="tag tag-active">Active</span></h3>
   <p>This repository is a tandem effort with a close friend. I was tasked with building a CLI tool to interact with a drone over an API. Development is slow, but active.</p>
   <p class="tech"><span class="chip">Rust</span></p>
 </div>
 
-<div class="card">
+<div class="card" style="--card-art: url('/assets/art/card-d.webp')">
   <h3><a href="https://github.com/SpoonNewman/Invincible.git">Invincible</a> <span class="tag tag-archived">Archived</span></h3>
   <p>This repository was my attempt at making an <em>Invincible</em> fan game. It didn't get too far and encountered a large number of challenges.</p>
   <p class="tech"><span class="chip">C#</span><span class="chip">Wolfram</span><span class="chip">Unity</span></p>
 </div>
 
-<div class="card">
+<div class="card" style="--card-art: url('/assets/art/card-c.webp')">
   <h3><a href="https://github.com/SpoonNewman/The-Box.git">The-Box</a></h3>
   <p>This repository was created to learn and practice Terraform.</p>
   <p class="tech"><span class="chip">AWS</span><span class="chip">Terraform</span><span class="chip">Python</span><span class="chip">Docker</span></p>
 </div>
 
-<div class="card">
+<div class="card" style="--card-art: url('/assets/art/card-a.webp')">
   <h3><a href="https://github.com/SpoonNewman/Developer-Workspace.git">Developer-Workspace</a></h3>
   <p>This was my original repository when I first began learning how to write code.</p>
   <p class="tech"><span class="chip">Python</span><span class="chip">PowerShell</span></p>
