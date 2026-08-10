@@ -117,6 +117,7 @@ body {
 main {
   flex: 1;
   width: 100%;
+  position: relative;
   animation: pageIn 320ms ease-out both;
 }
 
@@ -326,39 +327,47 @@ main > h1 + blockquote p {
   color: var(--accent);
 }
 
-/* ---------- Hero art ---------- */
-.hero-art {
-  margin: 2.25rem 0 1.5rem;
-  text-align: center;
-}
-
-.hero-art img {
-  display: block;
+/* ---------- Hero art underlay (art as a layer below the text) ---------- */
+.hero-art-bg {
+  position: absolute;
+  z-index: -1;
+  top: -1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
   width: 100%;
-  height: auto;
-  max-width: 100%;
-  border-radius: 14px;
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow);
-  background: var(--card);
+  max-width: calc(var(--maxw) + 3rem);
+  height: 22rem;
+  background: url("/assets/art/hero.webp") center / cover no-repeat;
+  opacity: 0.12;
+  border-radius: 16px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 16%, black 72%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 16%, black 72%, transparent 100%);
+  pointer-events: none;
 }
 
-.hero-art figcaption {
-  margin-top: 0.6rem;
+html[data-theme="dark"] .hero-art-bg {
+  opacity: 0.18;
+}
+
+.hero-art-credit {
+  margin: 0.25rem 0 1.5rem;
   font-size: 0.8rem;
   color: var(--muted);
 }
 
-.hero-art figcaption a {
+.hero-art-credit a {
   color: var(--muted);
 }
 
-.hero-art figcaption a:hover {
+.hero-art-credit a:hover {
   color: var(--accent);
 }
 
 /* ---------- Project cards ---------- */
 .card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   margin: 1.75rem 0;
   padding: 1.35rem 1.5rem;
   background: var(--card);
@@ -366,6 +375,23 @@ main > h1 + blockquote p {
   border-radius: 14px;
   box-shadow: var(--shadow);
   transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+/* Art underlay inside project cards (same "layer below text" treatment) */
+.card::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: url("/assets/art/hero.webp") center / cover no-repeat;
+  opacity: 0.08;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 60%);
+  mask-image: linear-gradient(to right, transparent 0%, black 60%);
+  pointer-events: none;
+}
+
+html[data-theme="dark"] .card::before {
+  opacity: 0.14;
 }
 
 .card:hover {

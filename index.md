@@ -8,10 +8,9 @@ description: I build projects to learn, explore ideas, and get better at writing
 
 > I build projects to learn, explore ideas, and get better at writing software.
 
-<figure class="hero-art">
-  <img src="/assets/art/hero.webp" alt="Duotone woodcut-style illustration of a warrior woman with a katana, by Military Studio" width="1400" height="787" loading="eager">
-  <figcaption>Art by <a href="https://military.studio" rel="noopener">Military Studio</a></figcaption>
-</figure>
+<div class="hero-art-bg" aria-hidden="true"></div>
+
+<p class="hero-art-credit">Art by <a href="https://military.studio" rel="noopener">Military Studio</a></p>
 
 ## About
 
