@@ -8,6 +8,11 @@ description: I build projects to learn, explore ideas, and get better at writing
 
 > I build projects to learn, explore ideas, and get better at writing software.
 
+<figure class="hero-art">
+  <img src="/assets/art/hero.webp" alt="Duotone woodcut-style illustration of a warrior woman with a katana, by Military Studio" width="1400" height="787" loading="eager">
+  <figcaption>Art by <a href="https://military.studio" rel="noopener">Military Studio</a></figcaption>
+</figure>
+
 ## About
 
 I build tools and projects that help me learn by doing. My recent work includes a Rust-based CLI tool, infrastructure experiments with Terraform and cloud APIs, and side explorations in C#. I enjoy digging into systems, understanding how things work under the hood, and gaining experience across different languages and environments.

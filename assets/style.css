@@ -326,6 +326,37 @@ main > h1 + blockquote p {
   color: var(--accent);
 }
 
+/* ---------- Hero art ---------- */
+.hero-art {
+  margin: 2.25rem 0 1.5rem;
+  text-align: center;
+}
+
+.hero-art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  background: var(--card);
+}
+
+.hero-art figcaption {
+  margin-top: 0.6rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.hero-art figcaption a {
+  color: var(--muted);
+}
+
+.hero-art figcaption a:hover {
+  color: var(--accent);
+}
+
 /* ---------- Project cards ---------- */
 .card {
   margin: 1.75rem 0;
