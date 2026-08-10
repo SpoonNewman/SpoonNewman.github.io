@@ -394,19 +394,26 @@ html[data-theme="dark"] .card::before {
   opacity: 0.16;
 }
 
-/* In light mode, invert the underlay art so the dark-navy pieces read as
-   their natural light-background / dark-ink appearance. */
-html[data-theme="light"] .hero-art-bg,
-html[data-theme="light"] .card::before {
-  filter: invert(1);
+/* Light mode uses pre-processed "light" variants of the art (background
+   mapped to pure white, ink kept dark) so underlays read as clean white
+   prints instead of the gray wash a CSS invert of the navy pieces gives. */
+html[data-theme="light"] .hero-art-bg {
+  background-image: url("/assets/art/hero-light.webp");
 }
 
-/* No-JS fallback: same inversion when the OS prefers light and no manual
-   theme override is set. */
+html[data-theme="light"] .card::before {
+  background-image: var(--card-art-light, var(--card-art));
+}
+
+/* No-JS fallback: same light variants when the OS prefers light and no
+   manual theme override is set. */
 @media (prefers-color-scheme: light) {
-  html:not([data-theme="dark"]) .hero-art-bg,
+  html:not([data-theme="dark"]) .hero-art-bg {
+    background-image: url("/assets/art/hero-light.webp");
+  }
+
   html:not([data-theme="dark"]) .card::before {
-    filter: invert(1);
+    background-image: var(--card-art-light, var(--card-art));
   }
 }
 
