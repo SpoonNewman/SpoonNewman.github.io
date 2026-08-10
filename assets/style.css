@@ -563,6 +563,13 @@ hr {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+
+  /* Keep the easter egg's flash visible even for reduced-motion users:
+     it is a deliberate, brief overlay, not UI motion. */
+  .egg-overlay,
+  .egg-overlay * {
+    animation-duration: 1400ms !important;
+  }
 }
 
 /* ---------- Easter egg: 8-bit title overlay ---------- */
