@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ page.title | default: site.title }}</title>
+  <meta name="author" content="Rease Kessler">
+  <meta name="description" content="{{ page.description | default: site.description }}">
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+  <link rel="stylesheet" href="/assets/style.css">
+
+  <!-- Open Graph (link previews) -->
+  <meta property="og:site_name" content="{{ site.title }}">
+  <meta property="og:title" content="{{ page.title | default: site.title }}">
+  <meta property="og:description" content="{{ page.description | default: site.description }}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ site.url }}{{ page.url }}">
+
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f8fafc">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f172a">
+
+  <script>
+    // Theme init — runs before first paint so there's no flash of the wrong theme
+    (function () {
+      try {
+        var key = "theme";
+        var stored = localStorage.getItem(key);
+        var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        var theme = stored || (prefersDark ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <nav class="site-nav" aria-label="Primary">
+      <a class="brand" href="/">{{ site.title }}</a>
+      <span class="nav-links">
+        <a href="/">Home</a>
+        <a href="/medical">Medical</a>
+        <a href="https://github.com/spoonnewman" rel="me">GitHub</a>
+      </span>
+      <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle color theme">🌙 Dark</button>
+    </nav>
+  </header>
+
+  <main id="main">
+{{ content }}
+  </main>
+
+  <footer class="site-footer">
+    <p>© {{ site.time | date: "%Y" }} {{ site.title }} · <a href="/">Home</a> · <a href="/medical">Medical</a> · <a href="https://github.com/spoonnewman">GitHub</a></p>
+  </footer>
+
+  <script>
+    (function () {
+      var key = "theme";
+      var btn = document.getElementById("themeToggle");
+      if (!btn) return;
+      var doc = document.documentElement;
+
+      function updateButton(theme) {
+        btn.textContent = theme === "dark" ? "☀️ Light" : "🌙 Dark";
+      }
+      updateButton(doc.getAttribute("data-theme") || "light");
+
+      btn.addEventListener("click", function () {
+        var current = doc.getAttribute("data-theme");
+        var next = current === "dark" ? "light" : "dark";
+        doc.setAttribute("data-theme", next);
+        try { localStorage.setItem(key, next); } catch (e) {}
+        updateButton(next);
+      });
+    })();
+  </script>
+
+  <script src="/assets/src.js" defer></script>
+</body>
+</html>

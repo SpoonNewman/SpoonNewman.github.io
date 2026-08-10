@@ -1,2 +1,7 @@
+title: Rease Kessler
+description: I build projects to learn, explore ideas, and get better at writing software.
+url: https://www.rease.dev
 markdown: kramdown
 theme: null
+exclude:
+  - README.md

@@ -1,55 +1,8 @@
 ---
 layout: default
+title: Rease Kessler
+description: I build projects to learn, explore ideas, and get better at writing software.
 ---
-
-<link rel="stylesheet" href="/assets/style.css">
-
-<button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle theme">
-  🌙 Dark
-</button>
-
-<script>
-  (function () {
-    const key = "theme";
-    const btn = document.getElementById("themeToggle");
-    if (!btn) return;
-
-    const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const stored = localStorage.getItem(key);
-    const initial = stored || (prefersDark ? "dark" : "light");
-    document.documentElement.setAttribute("data-theme", initial);
-
-    function updateButton(theme) {
-      btn.textContent = theme === "dark" ? "☀️ Light" : "🌙 Dark";
-    }
-    updateButton(initial);
-
-    btn.addEventListener("click", function () {
-      const current = document.documentElement.getAttribute("data-theme");
-      const next = current === "dark" ? "light" : "dark";
-      document.documentElement.setAttribute("data-theme", next);
-      localStorage.setItem(key, next);
-      updateButton(next);
-    });
-  })();
-</script>
-
-<script>
-(() => {
-  let n = 0;
-  const onKey = () => {
-    if (++n < 10) return;   // after 10 keydowns, load payload
-    window.removeEventListener("keydown", onKey);
-
-    const s = document.createElement("script");
-    s.src = "/assets/site.min.js";
-    s.defer = true;
-    document.head.appendChild(s);
-  };
-  window.addEventListener("keydown", onKey, { passive: true });
-})();
-</script>
-
 
 # Rease Kessler
 
@@ -59,42 +12,37 @@ layout: default
 
 I build tools and projects that help me learn by doing. My recent work includes a Rust-based CLI tool, infrastructure experiments with Terraform and cloud APIs, and side explorations in C#. I enjoy digging into systems, understanding how things work under the hood, and gaining experience across different languages and environments.
 
-**Note:** At this time, while I still hold a passion for writing software, I am pursuing a separate career path.
+<div class="note">
+<p><strong>Note:</strong> At this time, while I still hold a passion for writing software, I am pursuing a separate career path.</p>
+</div>
 
-> This site is a simple place to highlight a few projects and share what I’m learning.
+> This site is a simple place to highlight a few projects and share what I'm learning.
 
 ## Projects
 
-### [Drone-CLI](https://github.com/SpoonNewman/drone-cli.git)
+<div class="card">
+  <h3><a href="https://github.com/SpoonNewman/drone-cli.git">Drone-CLI</a> <span class="tag tag-active">Active</span></h3>
+  <p>This repository is a tandem effort with a close friend. I was tasked with building a CLI tool to interact with a drone over an API. Development is slow, but active.</p>
+  <p class="tech"><span class="chip">Rust</span></p>
+</div>
 
-This repository is a tandem effort with a close friend. I was tasked with building a CLI tool to interact with a drone over an API.  
-Development is slow, but active.
+<div class="card">
+  <h3><a href="https://github.com/SpoonNewman/Invincible.git">Invincible</a> <span class="tag tag-archived">Archived</span></h3>
+  <p>This repository was my attempt at making an <em>Invincible</em> fan game. It didn't get too far and encountered a large number of challenges.</p>
+  <p class="tech"><span class="chip">C#</span><span class="chip">Wolfram</span><span class="chip">Unity</span></p>
+</div>
 
-**Tech: Rust**
+<div class="card">
+  <h3><a href="https://github.com/SpoonNewman/The-Box.git">The-Box</a></h3>
+  <p>This repository was created to learn and practice Terraform.</p>
+  <p class="tech"><span class="chip">AWS</span><span class="chip">Terraform</span><span class="chip">Python</span><span class="chip">Docker</span></p>
+</div>
 
----
-
-### [Invincible](https://github.com/SpoonNewman/Invincible.git)
-
-This repository was my attempt at making an *Invincible* fan game. It didn’t get too far and encountered a large number of challenges.
-
-**Tech: C#, Wolfram, Unity**
-
----
-
-### [The-Box](https://github.com/SpoonNewman/The-Box.git)
-
-This repository was created to learn and practice Terraform.
-
-**Tech: AWS, Terraform, Python, Docker**
-
----
-
-### [Developer-Workspace](https://github.com/SpoonNewman/Developer-Workspace.git)
-
-This was my original repository when I first began learning how to write code.
-
-**Tech: Python, Powershell**
+<div class="card">
+  <h3><a href="https://github.com/SpoonNewman/Developer-Workspace.git">Developer-Workspace</a></h3>
+  <p>This was my original repository when I first began learning how to write code.</p>
+  <p class="tech"><span class="chip">Python</span><span class="chip">PowerShell</span></p>
+</div>
 
 ## Currently Interested In
 

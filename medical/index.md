@@ -1,49 +1,21 @@
 ---
 layout: default
+title: Medical · Rease Kessler
+description: Pre-med student with a software engineering background.
 ---
-
-<link rel="stylesheet" href="/assets/style.css">
-
-<button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle theme">
-  🌙 Dark
-</button>
-
-<script>
-  (function () {
-    const key = "theme";
-    const btn = document.getElementById("themeToggle");
-    if (!btn) return;
-
-    const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const stored = localStorage.getItem(key);
-    const initial = stored || (prefersDark ? "dark" : "light");
-    document.documentElement.setAttribute("data-theme", initial);
-
-    function updateButton(theme) {
-      btn.textContent = theme === "dark" ? "☀️ Light" : "🌙 Dark";
-    }
-    updateButton(initial);
-
-    btn.addEventListener("click", function () {
-      const current = document.documentElement.getAttribute("data-theme");
-      const next = current === "dark" ? "light" : "dark";
-      document.documentElement.setAttribute("data-theme", next);
-      localStorage.setItem(key, next);
-      updateButton(next);
-    });
-  })();
-</script>
 
 # Rease Kessler
 
-> Pre-med student with a software engineering background. Currently enrolled for an associates of science in Bridge Valley Techincal Community College, and plan to transfer to WVU to get a Bachelors degree in Biology.
+> Pre-med student with a software engineering background. Currently enrolled for an Associate of Science at BridgeValley Community and Technical College, and plan to transfer to WVU to get a bachelor's degree in Biology.
 
 ## Medical Interests
 
-- Anesthesiology
-- Emergency medicine
-- Critical Care
-- Chronic Pain Management
+<div class="tags">
+  <span class="chip">Anesthesiology</span>
+  <span class="chip">Emergency medicine</span>
+  <span class="chip">Critical Care</span>
+  <span class="chip">Chronic Pain Management</span>
+</div>
 
 ## Experience & Skills
 
@@ -51,7 +23,10 @@ N/A
 
 ## Education
 
-- Bridge Valley Techincal Community College
+<div class="card">
+  <h3>BridgeValley Community and Technical College</h3>
+  <p>Associate of Science — in progress</p>
+</div>
 
 ## Links
 
