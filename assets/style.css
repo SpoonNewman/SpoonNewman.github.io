@@ -648,3 +648,57 @@ hr {
   pointer-events: none;
   opacity: 0.35;
 }
+
+/* ---------- SMS opt-in form ---------- */
+.optin-card {
+  padding: 28px;
+}
+
+.optin-form {
+  display: grid;
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.optin-form label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.optin-form input[type="tel"] {
+  padding: 12px 14px;
+  font-size: 1rem;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  max-width: 340px;
+}
+
+.optin-form input[type="tel"]:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+
+.optin-form button {
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: var(--accent);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  max-width: 340px;
+}
+
+.optin-form button:hover {
+  filter: brightness(1.08);
+}
+
+.optin-disclosure {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
