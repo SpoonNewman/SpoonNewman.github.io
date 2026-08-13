@@ -19,7 +19,7 @@ Message and data rates may apply. You are responsible for any charges your carri
 
 ## Opting out
 
-Reply **STOP** to any message to opt out of the service. After opting out, you will receive no further messages. Reply **HELP** for assistance, or contact <a href="mailto:rease.dev.h42dk@passmail.net">rease.dev.h42dk@passmail.net</a>.
+Reply **STOP** to any message to opt out of the service. After opting out, you will receive no further messages. Reply **HELP** for assistance, or contact <a href="mailto:reasek@mit.edu">reasek@mit.edu</a>.
 
 ## Limitation of liability
 

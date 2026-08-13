@@ -22,4 +22,4 @@ Your mobile number is used only to send the automated security and privacy alert
 
 ## Choices
 
-You can stop receiving messages at any time by replying **STOP** to any alert. Contact <a href="mailto:rease.dev.h42dk@passmail.net">rease.dev.h42dk@passmail.net</a> with any questions.
+You can stop receiving messages at any time by replying **STOP** to any alert. Contact <a href="mailto:reasek@mit.edu">reasek@mit.edu</a> with any questions.

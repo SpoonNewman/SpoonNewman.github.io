@@ -546,6 +546,10 @@ hr {
   color: var(--accent);
 }
 
+.site-footer p.footer-manage {
+  margin-top: 0.5rem;
+}
+
 /* ---------- Responsive tweaks ---------- */
 @media (max-width: 520px) {
   .site-nav {

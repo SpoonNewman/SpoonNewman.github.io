@@ -30,5 +30,5 @@ N/A
 
 ## Links
 
-- Email: rease.dev.h42dk@passmail.net
+- Email: reasek@mit.edu
 - [Developer](https://www.rease.dev)
