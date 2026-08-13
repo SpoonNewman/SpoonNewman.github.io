@@ -702,3 +702,19 @@ hr {
   font-size: 0.9rem;
   color: var(--muted);
 }
+
+.optin-check {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 0.9rem;
+  color: var(--muted);
+  max-width: 560px;
+  cursor: pointer;
+}
+
+.optin-check input[type="checkbox"] {
+  margin-top: 3px;
+  accent-color: var(--accent);
+  flex-shrink: 0;
+}

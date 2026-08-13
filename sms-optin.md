@@ -13,6 +13,12 @@ permalink: /sms-optin/
   <form class="optin-form" action="/sms-optin" method="post">
     <label for="optin-phone">Mobile number</label>
     <input id="optin-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(555) 555-5555" required>
+
+    <label class="optin-check">
+      <input type="checkbox" name="consent" required>
+      <span>By checking this box and submitting this form, you consent to receive recurring security and privacy alert text messages from Rease Kessler (service: Hermes Alert) at the mobile number provided. Message frequency varies. Message and data rates may apply. Reply <strong>HELP</strong> for help or <strong>STOP</strong> to opt out. Read the <a href="/terms/">Terms of Service</a> and <a href="/privacy/">Privacy Policy</a>.</span>
+    </label>
+
     <button type="submit">Subscribe to SMS alerts</button>
   </form>
 
