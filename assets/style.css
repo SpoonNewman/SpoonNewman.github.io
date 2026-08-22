@@ -137,6 +137,18 @@ main {
   border-radius: 4px;
 }
 
+/* ---------- Flow-field particle background ---------- */
+/* Full-viewport canvas behind everything; dots drift on it (see
+   /assets/flow-field.js). The canvas paints the theme bg itself so it
+   blends with the page; it must stay below content but above the
+   propagated body background. */
+#flow-field {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
 /* ---------- Header / nav ---------- */
 .site-header {
   position: sticky;
