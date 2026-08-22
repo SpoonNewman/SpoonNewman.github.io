@@ -5,18 +5,20 @@
    repelled by the cursor. Theme-aware (dark: white dots, light:
    slate dots), works on touch.
 
-   TRAILS: each particle keeps a short history of its recent
-   positions; the frame is cleared solid and the trail is redrawn
-   with alpha that steps down with age, so every line is GUARANTEED
-   to fade out over TRAIL_MS no matter the browser. (v1 used the
-   classic translucent-fade fillRect trick, but low-alpha canvas
-   compositing is unreliable on some GPU/driver combos and the
-   trails accumulated until they filled the screen.)
+   LOOK: each particle is a bright dot (head) with a fading trail
+   drawn behind it. Trails fade out over TRAIL_MS by construction:
+   every frame the canvas is cleared solid, and each trail is
+   redrawn from the particle's position history with alpha windows
+   by absolute age (0.05 -> 1.0 head). When a particle dies it
+   becomes a ghost whose history ages out, so its trail fades
+   slowly instead of blinking out.
 
    NOTE: this always animates, exactly like the original — do NOT
-   gate it on prefers-reduced-motion. v1 froze into a static frame
-   when the OS reported reduce (Windows "animation effects" off)
-   and the dots sat still until refresh.
+   gate it on prefers-reduced-motion (v1 froze into a static frame
+   on systems that report reduce, e.g. Windows animation effects
+   off). And do NOT use the translucent fade-rect trick for trails
+   (v1 of the trails accumulated on some GPU/driver combos until
+   they filled the screen).
    ============================================================ */
 (function () {
   "use strict";
@@ -30,6 +32,18 @@
   var W = 0, H = 0, isMobile = false;
 
   var TRAIL_MS = 1400; /* trails fade out over ~1.4s */
+
+  /* Trail alpha windows by point age (ms). Drawn oldest -> newest,
+     alpha stepping up toward the head. Points older than TRAIL_MS
+     are dropped, so nothing accumulates. */
+  var BUCKETS = [
+    { max: 150,  alpha: 1.0 },   /* head of the trail */
+    { max: 300,  alpha: 0.78 },
+    { max: 520,  alpha: 0.5 },
+    { max: 760,  alpha: 0.28 },
+    { max: 1050, alpha: 0.13 },
+    { max: 1400, alpha: 0.05 }   /* tail - nearly gone */
+  ];
 
   /* Theme palettes: bg must match the CSS --bg token so the canvas
      blends seamlessly into the page. Warm dots are a rare accent. */
@@ -90,6 +104,7 @@
         ? Math.random() * 0.22 + 0.12
         : Math.random() * 0.35 + 0.18) * palette.alphaMul,
       warm: Math.random() < 0.07,
+      dead: false,
       history: [] /* trail points: {x, y, t} */
     };
   }
@@ -111,40 +126,35 @@
     return [dPdy * 180, -dPdx * 180];
   }
 
-  /* Draw the particle's trail: the history polyline split into 4 age
-     buckets, oldest first, alpha stepping down so the line visibly
-     fades out toward its tail. Newest bucket draws at full alpha. */
-  function drawTrail(p, span) {
+  function dropOld(p, now) {
+    while (p.history.length && now - p.history[0].t > TRAIL_MS) p.history.shift();
+  }
+
+  /* Draw the fading trail: the history polyline split into age
+     buckets, oldest first, alpha stepping up toward the head. */
+  function drawTrail(p, now) {
     var h = p.history;
     var n = h.length;
-    if (n < 2 || span <= 0) return;
+    if (n < 2) return;
 
     var color = p.warm ? palette.warm : palette.dot;
-    var width = p.size;
-
-    var BUCKETS = [
-      { from: 0.75, alpha: 0.06 },   /* oldest — fading out */
-      { from: 0.5,  alpha: 0.18 },
-      { from: 0.25, alpha: 0.45 },
-      { from: 0,    alpha: 1.0 }     /* newest — the head */
-    ];
-
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
+
+    var prevMax = 0;
     for (var b = 0; b < BUCKETS.length; b++) {
-      var bucket = BUCKETS[b];
-      var from = bucket.from;
-      var to = b + 1 < BUCKETS.length ? BUCKETS[b + 1].from : 1.01;
-      var a = p.alpha * bucket.alpha;
+      var max = BUCKETS[b].max;
+      var a = p.alpha * BUCKETS[b].alpha;
+      if (a < 0.015) { prevMax = max; continue; }  /* invisible: skip */
 
       ctx.strokeStyle = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", " + a + ")";
-      ctx.lineWidth = width;
+      ctx.lineWidth = p.size;
 
       ctx.beginPath();
       var started = false;
       for (var i = 0; i < n; i++) {
-        var f = (h[i].t - h[0].t) / span;
-        if (f < from || f >= to) continue;
+        var age = now - h[i].t;
+        if (age <= prevMax || age > max) continue;
         if (!started) {
           ctx.moveTo(h[i].x, h[i].y);
           started = true;
@@ -153,7 +163,29 @@
         }
       }
       if (started) ctx.stroke();
+      prevMax = max;
     }
+  }
+
+  /* The bright dot at the head of the trail, with a soft glow so
+     the moving particle is clearly discernible. */
+  function drawHead(p) {
+    var color = p.warm ? palette.warm : palette.dot;
+    var css = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", " + p.alpha + ")";
+
+    /* soft glow halo (skipped for the tiniest particles) */
+    if (p.size > 0.7) {
+      ctx.fillStyle = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", " + p.alpha * 0.22 + ")";
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * 3.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    /* the dot itself */
+    ctx.fillStyle = css;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size * 1.8, 0, Math.PI * 2);
+    ctx.fill();
   }
 
   function loop() {
@@ -168,40 +200,52 @@
       for (var i = 0; i < particles.length; i++) {
         var p = particles[i];
 
-        var v = curl(p.x, p.y, time);
-        p.x += v[0];
-        p.y += v[1];
+        if (!p.dead) {
+          var v = curl(p.x, p.y, time);
+          p.x += v[0];
+          p.y += v[1];
 
-        /* Mouse repulsion within 150px. */
-        var dx = p.x - mouseX;
-        var dy = p.y - mouseY;
-        var d2 = dx * dx + dy * dy;
-        if (d2 < 22500 && d2 > 1) {
-          var d = Math.sqrt(d2);
-          var f = (150 - d) / 150;
-          p.x += (dx / d) * f * 2.2;
-          p.y += (dy / d) * f * 2.2;
+          /* Mouse repulsion within 150px. */
+          var dx = p.x - mouseX;
+          var dy = p.y - mouseY;
+          var d2 = dx * dx + dy * dy;
+          if (d2 < 22500 && d2 > 1) {
+            var d = Math.sqrt(d2);
+            var f = (150 - d) / 150;
+            p.x += (dx / d) * f * 2.2;
+            p.y += (dy / d) * f * 2.2;
+          }
+
+          p.life--;
+          if (p.life <= 0 || p.x < -40 || p.x > W + 40 || p.y < -40 || p.y > H + 40) {
+            p.dead = true; /* ghost: trail fades out, no instant blink */
+          }
         }
 
-        p.life--;
-        if (p.life <= 0 || p.x < -40 || p.x > W + 40 || p.y < -40 || p.y > H + 40) {
-          var np = makeParticle();
-          for (var k in np) p[k] = np[k];
+        if (p.dead) {
+          /* Trail ages out over TRAIL_MS; respawn once it's gone. */
+          if (p.history.length === 0) {
+            var np = makeParticle();
+            for (var k in np) p[k] = np[k];
+            continue;
+          }
+          dropOld(p, now);
+          drawTrail(p, now);
           continue;
         }
 
-        if (!isMobile) {
-          p.history.push({ x: p.x, y: p.y, t: now });
-          while (p.history.length && now - p.history[0].t > TRAIL_MS) p.history.shift();
-          var span = p.history[p.history.length - 1].t - p.history[0].t;
-          drawTrail(p, span);
-        } else {
+        if (isMobile) {
           /* Mobile: plain dot, no trail — cheaper and still lively. */
           var color = p.warm ? palette.warm : palette.dot;
           ctx.fillStyle = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", " + p.alpha + ")";
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
           ctx.fill();
+        } else {
+          p.history.push({ x: p.x, y: p.y, t: now });
+          dropOld(p, now);
+          drawTrail(p, now);
+          drawHead(p);
         }
       }
     } finally {
