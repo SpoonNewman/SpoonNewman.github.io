@@ -5,11 +5,18 @@
    repelled by the cursor. Theme-aware (dark: white dots, light:
    slate dots), works on touch.
 
-   NOTE: this always animates, exactly like the original. The
-   first version froze into a single static frame when the OS
-   reported prefers-reduced-motion (e.g. Windows "animation
-   effects" off), which made the dots sit still until refresh —
-   nightmare.app animates regardless, so we do too.
+   TRAILS: each particle keeps a short history of its recent
+   positions; the frame is cleared solid and the trail is redrawn
+   with alpha that steps down with age, so every line is GUARANTEED
+   to fade out over TRAIL_MS no matter the browser. (v1 used the
+   classic translucent-fade fillRect trick, but low-alpha canvas
+   compositing is unreliable on some GPU/driver combos and the
+   trails accumulated until they filled the screen.)
+
+   NOTE: this always animates, exactly like the original — do NOT
+   gate it on prefers-reduced-motion. v1 froze into a static frame
+   when the OS reported reduce (Windows "animation effects" off)
+   and the dots sat still until refresh.
    ============================================================ */
 (function () {
   "use strict";
@@ -22,19 +29,19 @@
   var time = 0, particles = [];
   var W = 0, H = 0, isMobile = false;
 
+  var TRAIL_MS = 1400; /* trails fade out over ~1.4s */
+
   /* Theme palettes: bg must match the CSS --bg token so the canvas
      blends seamlessly into the page. Warm dots are a rare accent. */
   var PALETTES = {
     dark: {
       bg: "#0f172a",
-      fade: "rgba(15, 23, 42, 0.045)",
       dot: [220, 226, 240],
       warm: [232, 204, 178],
       alphaMul: 1
     },
     light: {
       bg: "#f8fafc",
-      fade: "rgba(248, 250, 252, 0.055)",
       dot: [51, 65, 85],
       warm: [124, 58, 237],
       alphaMul: 0.8
@@ -75,8 +82,6 @@
     return {
       x: Math.random() * W,
       y: Math.random() * H,
-      px: 0,
-      py: 0,
       life: Math.floor(Math.random() * 260 + 140),
       size: small
         ? (Math.random() * 0.8 + 0.35) * sizeMul
@@ -84,7 +89,8 @@
       alpha: (small
         ? Math.random() * 0.22 + 0.12
         : Math.random() * 0.35 + 0.18) * palette.alphaMul,
-      warm: Math.random() < 0.07
+      warm: Math.random() < 0.07,
+      history: [] /* trail points: {x, y, t} */
     };
   }
 
@@ -105,39 +111,62 @@
     return [dPdy * 180, -dPdx * 180];
   }
 
-  function drawParticle(p) {
+  /* Draw the particle's trail: the history polyline split into 4 age
+     buckets, oldest first, alpha stepping down so the line visibly
+     fades out toward its tail. Newest bucket draws at full alpha. */
+  function drawTrail(p, span) {
+    var h = p.history;
+    var n = h.length;
+    if (n < 2 || span <= 0) return;
+
     var color = p.warm ? palette.warm : palette.dot;
-    var a = p.warm ? p.alpha * 0.9 : p.alpha;
-    var css = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", " + a + ")";
-    if (isMobile) {
-      /* Mobile: plain dots (no line trails) for performance. */
-      ctx.fillStyle = css;
+    var width = p.size;
+
+    var BUCKETS = [
+      { from: 0.75, alpha: 0.06 },   /* oldest — fading out */
+      { from: 0.5,  alpha: 0.18 },
+      { from: 0.25, alpha: 0.45 },
+      { from: 0,    alpha: 1.0 }     /* newest — the head */
+    ];
+
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    for (var b = 0; b < BUCKETS.length; b++) {
+      var bucket = BUCKETS[b];
+      var from = bucket.from;
+      var to = b + 1 < BUCKETS.length ? BUCKETS[b + 1].from : 1.01;
+      var a = p.alpha * bucket.alpha;
+
+      ctx.strokeStyle = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", " + a + ")";
+      ctx.lineWidth = width;
+
       ctx.beginPath();
-      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      ctx.fill();
-    } else {
-      /* Desktop: draw the segment since the last frame — the trail. */
-      ctx.strokeStyle = css;
-      ctx.lineWidth = p.size;
-      ctx.lineCap = "round";
-      ctx.beginPath();
-      ctx.moveTo(p.px, p.py);
-      ctx.lineTo(p.x, p.y);
-      ctx.stroke();
+      var started = false;
+      for (var i = 0; i < n; i++) {
+        var f = (h[i].t - h[0].t) / span;
+        if (f < from || f >= to) continue;
+        if (!started) {
+          ctx.moveTo(h[i].x, h[i].y);
+          started = true;
+        } else {
+          ctx.lineTo(h[i].x, h[i].y);
+        }
+      }
+      if (started) ctx.stroke();
     }
   }
 
   function loop() {
     try {
       time++;
-      /* Fade the previous frame: this is what leaves the trails. */
-      ctx.fillStyle = palette.fade;
+      var now = Date.now();
+
+      /* Solid clear every frame — nothing accumulates. */
+      ctx.fillStyle = palette.bg;
       ctx.fillRect(0, 0, W, H);
 
       for (var i = 0; i < particles.length; i++) {
         var p = particles[i];
-        p.px = p.x;
-        p.py = p.y;
 
         var v = curl(p.x, p.y, time);
         p.x += v[0];
@@ -161,7 +190,19 @@
           continue;
         }
 
-        drawParticle(p);
+        if (!isMobile) {
+          p.history.push({ x: p.x, y: p.y, t: now });
+          while (p.history.length && now - p.history[0].t > TRAIL_MS) p.history.shift();
+          var span = p.history[p.history.length - 1].t - p.history[0].t;
+          drawTrail(p, span);
+        } else {
+          /* Mobile: plain dot, no trail — cheaper and still lively. */
+          var color = p.warm ? palette.warm : palette.dot;
+          ctx.fillStyle = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", " + p.alpha + ")";
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
     } finally {
       /* Always reschedule, even if a frame threw — one bad particle
