@@ -3,7 +3,13 @@
    Adapted from the effect on nightmare.app/test/:
    white dots drifting on a sine-wave flow field, leaving trails,
    repelled by the cursor. Theme-aware (dark: white dots, light:
-   slate dots), respects prefers-reduced-motion, works on touch.
+   slate dots), works on touch.
+
+   NOTE: this always animates, exactly like the original. The
+   first version froze into a single static frame when the OS
+   reported prefers-reduced-motion (e.g. Windows "animation
+   effects" off), which made the dots sit still until refresh —
+   nightmare.app animates regardless, so we do too.
    ============================================================ */
 (function () {
   "use strict";
@@ -42,10 +48,6 @@
       ? "dark" : "light";
   }
   var palette = PALETTES[theme()];
-
-  function reducedMotion() {
-    return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  }
 
   function resize() {
     W = window.innerWidth;
@@ -126,61 +128,51 @@
   }
 
   function loop() {
-    time++;
-    /* Fade the previous frame: this is what leaves the trails. */
-    ctx.fillStyle = palette.fade;
-    ctx.fillRect(0, 0, W, H);
+    try {
+      time++;
+      /* Fade the previous frame: this is what leaves the trails. */
+      ctx.fillStyle = palette.fade;
+      ctx.fillRect(0, 0, W, H);
 
-    for (var i = 0; i < particles.length; i++) {
-      var p = particles[i];
-      p.px = p.x;
-      p.py = p.y;
+      for (var i = 0; i < particles.length; i++) {
+        var p = particles[i];
+        p.px = p.x;
+        p.py = p.y;
 
-      var v = curl(p.x, p.y, time);
-      p.x += v[0];
-      p.y += v[1];
+        var v = curl(p.x, p.y, time);
+        p.x += v[0];
+        p.y += v[1];
 
-      /* Mouse repulsion within 150px. */
-      var dx = p.x - mouseX;
-      var dy = p.y - mouseY;
-      var d2 = dx * dx + dy * dy;
-      if (d2 < 22500 && d2 > 1) {
-        var d = Math.sqrt(d2);
-        var f = (150 - d) / 150;
-        p.x += (dx / d) * f * 2.2;
-        p.y += (dy / d) * f * 2.2;
+        /* Mouse repulsion within 150px. */
+        var dx = p.x - mouseX;
+        var dy = p.y - mouseY;
+        var d2 = dx * dx + dy * dy;
+        if (d2 < 22500 && d2 > 1) {
+          var d = Math.sqrt(d2);
+          var f = (150 - d) / 150;
+          p.x += (dx / d) * f * 2.2;
+          p.y += (dy / d) * f * 2.2;
+        }
+
+        p.life--;
+        if (p.life <= 0 || p.x < -40 || p.x > W + 40 || p.y < -40 || p.y > H + 40) {
+          var np = makeParticle();
+          for (var k in np) p[k] = np[k];
+          continue;
+        }
+
+        drawParticle(p);
       }
-
-      p.life--;
-      if (p.life <= 0 || p.x < -40 || p.x > W + 40 || p.y < -40 || p.y > H + 40) {
-        var np = makeParticle();
-        for (var k in np) p[k] = np[k];
-        continue;
-      }
-
-      drawParticle(p);
-    }
-    requestAnimationFrame(loop);
-  }
-
-  /* Reduced motion: one static frame of dots, no animation. */
-  function staticFrame() {
-    ctx.fillStyle = palette.bg;
-    ctx.fillRect(0, 0, W, H);
-    for (var i = 0; i < particles.length; i++) {
-      var p = particles[i];
-      var color = p.warm ? palette.warm : palette.dot;
-      ctx.fillStyle = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", " + p.alpha + ")";
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, Math.max(p.size, 0.6), 0, Math.PI * 2);
-      ctx.fill();
+    } finally {
+      /* Always reschedule, even if a frame threw — one bad particle
+         must never permanently stop the animation. */
+      requestAnimationFrame(loop);
     }
   }
 
   window.addEventListener("resize", function () {
     resize();
     spawn();
-    if (reducedMotion()) staticFrame();
   });
 
   window.addEventListener("mousemove", function (e) {
@@ -204,14 +196,9 @@
     ctx.fillStyle = palette.bg;
     ctx.fillRect(0, 0, W, H);
     spawn();
-    if (reducedMotion()) staticFrame();
   }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
   resize();
   spawn();
-  if (reducedMotion()) {
-    staticFrame();
-  } else {
-    requestAnimationFrame(loop);
-  }
+  requestAnimationFrame(loop);
 })();
