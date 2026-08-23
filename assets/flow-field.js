@@ -35,7 +35,7 @@
   var W = 0, H = 0;
   var TAU_X = 1, TAU_Y = 1; /* 2PI / W, 2PI / H — set on resize */
 
-  var CURL = 38; /* field speed multiplier; lower = slower drift */
+  var CURL = 19; /* field speed multiplier; lower = slower drift */
 
   /* Theme palettes: bg must match the CSS --bg token so the canvas
      blends seamlessly into the page. Warm dots are a rare accent. */
