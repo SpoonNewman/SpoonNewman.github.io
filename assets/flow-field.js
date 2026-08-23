@@ -87,13 +87,17 @@
       alpha: (small
         ? Math.random() * 0.22 + 0.12
         : Math.random() * 0.35 + 0.18) * palette.alphaMul,
-      warm: Math.random() < 0.07
+      warm: Math.random() < 0.07,
+      dead: false,        /* dying? fading out */
+      fadeStart: 0,       /* when the fade-out began */
+      fadeMs: 800         /* how long the fade-out lasts */
     };
   }
 
   /* Flow field: a sum of sines/cosines over x, y and time. The curl
      (rotated gradient) gives each particle its velocity, which is what
-     bends the dots into those circular, swirling paths. */
+     bends the dots into those circular, swirling paths. The 110 scale
+     is the field's speed; lower = slower drift. */
   function potential(x, y, t) {
     var s = 0.0022;
     return Math.sin(x * s + t * 0.00018) * Math.cos(y * s * 1.3 - t * 0.00012)
@@ -105,17 +109,18 @@
     var eps = 3;
     var dPdy = (potential(x, y + eps, t) - potential(x, y - eps, t)) / (2 * eps);
     var dPdx = (potential(x + eps, y, t) - potential(x - eps, y, t)) / (2 * eps);
-    return [dPdy * 180, -dPdx * 180];
+    return [dPdy * 110, -dPdx * 110];
   }
 
-  /* Draw a small glowing "star" dot. */
-  function drawDot(p) {
+  /* Draw a small glowing "star" dot. Pass the alpha to draw at
+     (a fading ghost passes a decreasing value). */
+  function drawDot(p, a) {
     var color = p.warm ? palette.warm : palette.dot;
-    var css = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", " + p.alpha + ")";
+    var css = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", " + a + ")";
 
     /* soft glow halo (skipped for the tiniest particles) */
     if (p.size > 0.7) {
-      ctx.fillStyle = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", " + p.alpha * 0.22 + ")";
+      ctx.fillStyle = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", " + a * 0.22 + ")";
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.size * 3.5, 0, Math.PI * 2);
       ctx.fill();
@@ -139,29 +144,44 @@
       for (var i = 0; i < particles.length; i++) {
         var p = particles[i];
 
-        var v = curl(p.x, p.y, time);
-        p.x += v[0];
-        p.y += v[1];
+        if (!p.dead) {
+          var v = curl(p.x, p.y, time);
+          p.x += v[0];
+          p.y += v[1];
 
-        /* Mouse repulsion within 150px. */
-        var dx = p.x - mouseX;
-        var dy = p.y - mouseY;
-        var d2 = dx * dx + dy * dy;
-        if (d2 < 22500 && d2 > 1) {
-          var d = Math.sqrt(d2);
-          var f = (150 - d) / 150;
-          p.x += (dx / d) * f * 2.2;
-          p.y += (dy / d) * f * 2.2;
+          /* Mouse repulsion within 150px. */
+          var dx = p.x - mouseX;
+          var dy = p.y - mouseY;
+          var d2 = dx * dx + dy * dy;
+          if (d2 < 22500 && d2 > 1) {
+            var d = Math.sqrt(d2);
+            var f = (150 - d) / 150;
+            p.x += (dx / d) * f * 1.6;
+            p.y += (dy / d) * f * 1.6;
+          }
+
+          p.life--;
+          if (p.life <= 0 || p.x < -40 || p.x > W + 40 || p.y < -40 || p.y > H + 40) {
+            p.dead = true;      /* fade out instead of popping out */
+            p.fadeStart = Date.now();
+          }
         }
 
-        p.life--;
-        if (p.life <= 0 || p.x < -40 || p.x > W + 40 || p.y < -40 || p.y > H + 40) {
-          var np = makeParticle(isMobile() ? 0.75 : 1);
-          for (var k in np) p[k] = np[k];
+        if (p.dead) {
+          /* Ghost: fade the dot out, then respawn a fresh one. */
+          var t = (Date.now() - p.fadeStart) / p.fadeMs;
+          if (t >= 1) {
+            var np = makeParticle(isMobile() ? 0.75 : 1);
+            for (var k in np) p[k] = np[k];
+            continue;
+          }
+          var base = p.alpha * (1 - t);
+          if (base <= 0.01) continue;   /* invisible this frame */
+          drawDot(p, base);
           continue;
         }
 
-        drawDot(p);
+        drawDot(p, p.alpha);
       }
     } finally {
       /* Always reschedule, even if a frame threw — one bad particle
