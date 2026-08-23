@@ -5,10 +5,18 @@
    Theme-aware (dark: white dots, light: slate dots), works on touch.
 
    LOOK: a FIXED population of small glowing "star" dots generated
-   once on load (900 desktop / 300 mobile). They flow forever on the
-   field and NEVER despawn — when one drifts off-screen it wraps
-   around to the opposite edge. No death/respawn means no flicker by
-   construction and perfectly constant density.
+   once on load (900 desktop / 300 mobile). They flow forever and
+   NEVER despawn. No death/respawn means no flicker by construction.
+
+   TORUS-PERIODIC FIELD: the flow field is built from sine/cosine
+   terms whose spatial frequencies are exact integer multiples of
+   2PI/W and 2PI/H, so the field is seamless across the wrap edges
+   (the velocity at the right edge equals the velocity at the left
+   edge). Because the field is the curl of a scalar (incompressible)
+   AND periodic, particles can never be herded into dense clumps —
+   density stays perfectly constant forever. (v6 used a non-periodic
+   field + teleport wrap; the seam broke incompressibility and the
+   interior slowly drained into edge swirls over 2-3 min.)
 
    NOTE: this always animates, exactly like the original — do NOT
    gate it on prefers-reduced-motion (a v1 static-frame freeze). And
@@ -25,8 +33,9 @@
   var mouseX = -9999, mouseY = -9999;
   var time = 0, particles = [];
   var W = 0, H = 0;
+  var TAU_X = 1, TAU_Y = 1; /* 2PI / W, 2PI / H — set on resize */
 
-  var WRAP = 15; /* margin where dots wrap to the opposite edge */
+  var CURL = 38; /* field speed multiplier; lower = slower drift */
 
   /* Theme palettes: bg must match the CSS --bg token so the canvas
      blends seamlessly into the page. Warm dots are a rare accent. */
@@ -56,6 +65,8 @@
   function resize() {
     W = window.innerWidth;
     H = window.innerHeight;
+    TAU_X = 6.283185307179586 / W;
+    TAU_Y = 6.283185307179586 / H;
     canvas.width = W * dpr;
     canvas.height = H * dpr;
     canvas.style.width = W + "px";
@@ -93,22 +104,24 @@
     };
   }
 
-  /* Flow field: a sum of sines/cosines over x, y and time. The curl
-     (rotated gradient) gives each particle its velocity, which is what
-     bends the dots into those circular, swirling paths. The 110 scale
-     is the field's speed; lower = slower drift. */
+  /* Torus-periodic potential: every spatial frequency below is an
+     integer multiple of 2PI/W (in u = x*TAU_X) and 2PI/H (in
+     v = y*TAU_Y), so the whole field repeats seamlessly over the
+     screen dimensions. The curl of this gives each particle its
+     velocity — incompressible AND periodic = constant density. */
   function potential(x, y, t) {
-    var s = 0.0022;
-    return Math.sin(x * s + t * 0.00018) * Math.cos(y * s * 1.3 - t * 0.00012)
-         + Math.sin((x + y) * s * 0.55 + t * 0.00008) * 0.55
-         + Math.cos((x - y) * s * 0.7 - t * 0.00009) * 0.4;
+    var u = x * TAU_X;
+    var v = y * TAU_Y;
+    return Math.sin(2 * u + t * 0.00018)
+         + Math.sin(u + v + t * 0.00008) * 0.55
+         + Math.cos(u - 2 * v - t * 0.00009) * 0.4;
   }
 
   function curl(x, y, t) {
     var eps = 3;
     var dPdy = (potential(x, y + eps, t) - potential(x, y - eps, t)) / (2 * eps);
     var dPdx = (potential(x + eps, y, t) - potential(x - eps, y, t)) / (2 * eps);
-    return [dPdy * 110, -dPdx * 110];
+    return [dPdy * CURL, -dPdx * CURL];
   }
 
   /* Draw a small glowing "star" dot. */
@@ -157,12 +170,13 @@
           p.y += (dy / d) * f * 1.6;
         }
 
-        /* Never despawn: wrap around the edges so the population
-           stays constant and the screen never empties. */
-        if (p.x < -WRAP) p.x = W + WRAP;
-        else if (p.x > W + WRAP) p.x = -WRAP;
-        if (p.y < -WRAP) p.y = H + WRAP;
-        else if (p.y > H + WRAP) p.y = -WRAP;
+        /* Seamless wrap: pure shift by W or H. Because the field is
+           torus-periodic, a dot leaving the right edge re-enters the
+           left with the same velocity — no seam, no herding. */
+        if (p.x < 0) p.x += W;
+        else if (p.x >= W) p.x -= W;
+        if (p.y < 0) p.y += H;
+        else if (p.y >= H) p.y -= H;
 
         drawDot(p);
       }
