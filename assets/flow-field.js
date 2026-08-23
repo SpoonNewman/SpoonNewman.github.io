@@ -1,24 +1,19 @@
 /* ============================================================
    Flow-field particle background — rease.dev
    Adapted from the effect on nightmare.app/test/:
-   white dots drifting on a sine-wave flow field, leaving trails,
-   repelled by the cursor. Theme-aware (dark: white dots, light:
-   slate dots), works on touch.
+   dots drifting on a sine-wave flow field, repelled by the cursor.
+   Theme-aware (dark: white dots, light: slate dots), works on touch.
 
-   LOOK: each particle is a bright dot (head) with a fading trail
-   drawn behind it. Trails fade out over TRAIL_MS by construction:
-   every frame the canvas is cleared solid, and each trail is
-   redrawn from the particle's position history with alpha windows
-   by absolute age (0.05 -> 1.0 head). When a particle dies it
-   becomes a ghost whose history ages out, so its trail fades
-   slowly instead of blinking out.
+   LOOK: each particle is a small glowing "star" dot — no line
+   trails. (The comet/trail rendering was removed by request: the
+   user preferred the clean mobile look of plain moving dots
+   everywhere.) Particles still drift in circular swirls and scatter
+   from the cursor.
 
    NOTE: this always animates, exactly like the original — do NOT
-   gate it on prefers-reduced-motion (v1 froze into a static frame
-   on systems that report reduce, e.g. Windows animation effects
-   off). And do NOT use the translucent fade-rect trick for trails
-   (v1 of the trails accumulated on some GPU/driver combos until
-   they filled the screen).
+   gate it on prefers-reduced-motion (a v1 static-frame freeze). And
+   do NOT reintroduce translucent fade-rects for trails (v1 trails
+   accumulated on some GPU/driver combos).
    ============================================================ */
 (function () {
   "use strict";
@@ -29,21 +24,7 @@
   var dpr = Math.min(window.devicePixelRatio || 1, 2);
   var mouseX = -9999, mouseY = -9999;
   var time = 0, particles = [];
-  var W = 0, H = 0, isMobile = false;
-
-  var TRAIL_MS = 1400; /* trails fade out over ~1.4s */
-
-  /* Trail alpha windows by point age (ms). Drawn oldest -> newest,
-     alpha stepping up toward the head. Points older than TRAIL_MS
-     are dropped, so nothing accumulates. */
-  var BUCKETS = [
-    { max: 150,  alpha: 1.0 },   /* head of the trail */
-    { max: 300,  alpha: 0.78 },
-    { max: 520,  alpha: 0.5 },
-    { max: 760,  alpha: 0.28 },
-    { max: 1050, alpha: 0.13 },
-    { max: 1400, alpha: 0.05 }   /* tail - nearly gone */
-  ];
+  var W = 0, H = 0;
 
   /* Theme palettes: bg must match the CSS --bg token so the canvas
      blends seamlessly into the page. Warm dots are a rare accent. */
@@ -82,17 +63,20 @@
     ctx.fillRect(0, 0, W, H);
   }
 
-  function spawn() {
-    isMobile = W < 768;
-    var count = isMobile ? 180 : 600;
-    particles = [];
-    for (var i = 0; i < count; i++) particles.push(makeParticle());
+  function isMobile() {
+    return W < 768;
   }
 
-  function makeParticle() {
+  function spawn() {
+    var sizeMul = isMobile() ? 0.75 : 1;
+    var count = isMobile() ? 180 : 600;
+    particles = [];
+    for (var i = 0; i < count; i++) particles.push(makeParticle(sizeMul));
+  }
+
+  function makeParticle(sizeMul) {
     var r = Math.random();
     var small = r < 0.78;
-    var sizeMul = isMobile ? 0.75 : 1;
     return {
       x: Math.random() * W,
       y: Math.random() * H,
@@ -103,9 +87,7 @@
       alpha: (small
         ? Math.random() * 0.22 + 0.12
         : Math.random() * 0.35 + 0.18) * palette.alphaMul,
-      warm: Math.random() < 0.07,
-      dead: false,
-      history: [] /* trail points: {x, y, t} */
+      warm: Math.random() < 0.07
     };
   }
 
@@ -126,50 +108,8 @@
     return [dPdy * 180, -dPdx * 180];
   }
 
-  function dropOld(p, now) {
-    while (p.history.length && now - p.history[0].t > TRAIL_MS) p.history.shift();
-  }
-
-  /* Draw the fading trail: the history polyline split into age
-     buckets, oldest first, alpha stepping up toward the head. */
-  function drawTrail(p, now) {
-    var h = p.history;
-    var n = h.length;
-    if (n < 2) return;
-
-    var color = p.warm ? palette.warm : palette.dot;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-
-    var prevMax = 0;
-    for (var b = 0; b < BUCKETS.length; b++) {
-      var max = BUCKETS[b].max;
-      var a = p.alpha * BUCKETS[b].alpha;
-      if (a < 0.015) { prevMax = max; continue; }  /* invisible: skip */
-
-      ctx.strokeStyle = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", " + a + ")";
-      ctx.lineWidth = p.size;
-
-      ctx.beginPath();
-      var started = false;
-      for (var i = 0; i < n; i++) {
-        var age = now - h[i].t;
-        if (age <= prevMax || age > max) continue;
-        if (!started) {
-          ctx.moveTo(h[i].x, h[i].y);
-          started = true;
-        } else {
-          ctx.lineTo(h[i].x, h[i].y);
-        }
-      }
-      if (started) ctx.stroke();
-      prevMax = max;
-    }
-  }
-
-  /* The bright dot at the head of the trail, with a soft glow so
-     the moving particle is clearly discernible. */
-  function drawHead(p) {
+  /* Draw a small glowing "star" dot. */
+  function drawDot(p) {
     var color = p.warm ? palette.warm : palette.dot;
     var css = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", " + p.alpha + ")";
 
@@ -191,7 +131,6 @@
   function loop() {
     try {
       time++;
-      var now = Date.now();
 
       /* Solid clear every frame — nothing accumulates. */
       ctx.fillStyle = palette.bg;
@@ -200,53 +139,29 @@
       for (var i = 0; i < particles.length; i++) {
         var p = particles[i];
 
-        if (!p.dead) {
-          var v = curl(p.x, p.y, time);
-          p.x += v[0];
-          p.y += v[1];
+        var v = curl(p.x, p.y, time);
+        p.x += v[0];
+        p.y += v[1];
 
-          /* Mouse repulsion within 150px. */
-          var dx = p.x - mouseX;
-          var dy = p.y - mouseY;
-          var d2 = dx * dx + dy * dy;
-          if (d2 < 22500 && d2 > 1) {
-            var d = Math.sqrt(d2);
-            var f = (150 - d) / 150;
-            p.x += (dx / d) * f * 2.2;
-            p.y += (dy / d) * f * 2.2;
-          }
-
-          p.life--;
-          if (p.life <= 0 || p.x < -40 || p.x > W + 40 || p.y < -40 || p.y > H + 40) {
-            p.dead = true; /* ghost: trail fades out, no instant blink */
-          }
+        /* Mouse repulsion within 150px. */
+        var dx = p.x - mouseX;
+        var dy = p.y - mouseY;
+        var d2 = dx * dx + dy * dy;
+        if (d2 < 22500 && d2 > 1) {
+          var d = Math.sqrt(d2);
+          var f = (150 - d) / 150;
+          p.x += (dx / d) * f * 2.2;
+          p.y += (dy / d) * f * 2.2;
         }
 
-        if (p.dead) {
-          /* Trail ages out over TRAIL_MS; respawn once it's gone. */
-          if (p.history.length === 0) {
-            var np = makeParticle();
-            for (var k in np) p[k] = np[k];
-            continue;
-          }
-          dropOld(p, now);
-          drawTrail(p, now);
+        p.life--;
+        if (p.life <= 0 || p.x < -40 || p.x > W + 40 || p.y < -40 || p.y > H + 40) {
+          var np = makeParticle(isMobile() ? 0.75 : 1);
+          for (var k in np) p[k] = np[k];
           continue;
         }
 
-        if (isMobile) {
-          /* Mobile: plain dot, no trail — cheaper and still lively. */
-          var color = p.warm ? palette.warm : palette.dot;
-          ctx.fillStyle = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", " + p.alpha + ")";
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-          ctx.fill();
-        } else {
-          p.history.push({ x: p.x, y: p.y, t: now });
-          dropOld(p, now);
-          drawTrail(p, now);
-          drawHead(p);
-        }
+        drawDot(p);
       }
     } finally {
       /* Always reschedule, even if a frame threw — one bad particle
