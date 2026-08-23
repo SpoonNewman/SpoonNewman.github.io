@@ -4,16 +4,16 @@
    dots drifting on a sine-wave flow field, repelled by the cursor.
    Theme-aware (dark: white dots, light: slate dots), works on touch.
 
-   LOOK: each particle is a small glowing "star" dot — no line
-   trails. (The comet/trail rendering was removed by request: the
-   user preferred the clean mobile look of plain moving dots
-   everywhere.) Particles still drift in circular swirls and scatter
-   from the cursor.
+   LOOK: a FIXED population of small glowing "star" dots generated
+   once on load (900 desktop / 300 mobile). They flow forever on the
+   field and NEVER despawn — when one drifts off-screen it wraps
+   around to the opposite edge. No death/respawn means no flicker by
+   construction and perfectly constant density.
 
    NOTE: this always animates, exactly like the original — do NOT
    gate it on prefers-reduced-motion (a v1 static-frame freeze). And
-   do NOT reintroduce translucent fade-rects for trails (v1 trails
-   accumulated on some GPU/driver combos).
+   do NOT reintroduce translucent fade-rects (v1 trails accumulated
+   on some GPU/driver combos).
    ============================================================ */
 (function () {
   "use strict";
@@ -25,6 +25,8 @@
   var mouseX = -9999, mouseY = -9999;
   var time = 0, particles = [];
   var W = 0, H = 0;
+
+  var WRAP = 15; /* margin where dots wrap to the opposite edge */
 
   /* Theme palettes: bg must match the CSS --bg token so the canvas
      blends seamlessly into the page. Warm dots are a rare accent. */
@@ -67,9 +69,10 @@
     return W < 768;
   }
 
+  /* Generate the fixed population once — nothing is ever removed. */
   function spawn() {
+    var count = isMobile() ? 300 : 900;
     var sizeMul = isMobile() ? 0.75 : 1;
-    var count = isMobile() ? 180 : 600;
     particles = [];
     for (var i = 0; i < count; i++) particles.push(makeParticle(sizeMul));
   }
@@ -80,17 +83,13 @@
     return {
       x: Math.random() * W,
       y: Math.random() * H,
-      life: Math.floor(Math.random() * 260 + 140),
       size: small
         ? (Math.random() * 0.8 + 0.35) * sizeMul
         : (Math.random() * 1.3 + 0.9) * sizeMul,
       alpha: (small
         ? Math.random() * 0.22 + 0.12
         : Math.random() * 0.35 + 0.18) * palette.alphaMul,
-      warm: Math.random() < 0.07,
-      dead: false,        /* dying? fading out */
-      fadeStart: 0,       /* when the fade-out began */
-      fadeMs: 800         /* how long the fade-out lasts */
+      warm: Math.random() < 0.07
     };
   }
 
@@ -112,15 +111,14 @@
     return [dPdy * 110, -dPdx * 110];
   }
 
-  /* Draw a small glowing "star" dot. Pass the alpha to draw at
-     (a fading ghost passes a decreasing value). */
-  function drawDot(p, a) {
+  /* Draw a small glowing "star" dot. */
+  function drawDot(p) {
     var color = p.warm ? palette.warm : palette.dot;
-    var css = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", " + a + ")";
+    var css = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", " + p.alpha + ")";
 
     /* soft glow halo (skipped for the tiniest particles) */
     if (p.size > 0.7) {
-      ctx.fillStyle = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", " + a * 0.22 + ")";
+      ctx.fillStyle = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", " + p.alpha * 0.22 + ")";
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.size * 3.5, 0, Math.PI * 2);
       ctx.fill();
@@ -144,44 +142,29 @@
       for (var i = 0; i < particles.length; i++) {
         var p = particles[i];
 
-        if (!p.dead) {
-          var v = curl(p.x, p.y, time);
-          p.x += v[0];
-          p.y += v[1];
+        var v = curl(p.x, p.y, time);
+        p.x += v[0];
+        p.y += v[1];
 
-          /* Mouse repulsion within 150px. */
-          var dx = p.x - mouseX;
-          var dy = p.y - mouseY;
-          var d2 = dx * dx + dy * dy;
-          if (d2 < 22500 && d2 > 1) {
-            var d = Math.sqrt(d2);
-            var f = (150 - d) / 150;
-            p.x += (dx / d) * f * 1.6;
-            p.y += (dy / d) * f * 1.6;
-          }
-
-          p.life--;
-          if (p.life <= 0 || p.x < -40 || p.x > W + 40 || p.y < -40 || p.y > H + 40) {
-            p.dead = true;      /* fade out instead of popping out */
-            p.fadeStart = Date.now();
-          }
+        /* Mouse repulsion within 150px. */
+        var dx = p.x - mouseX;
+        var dy = p.y - mouseY;
+        var d2 = dx * dx + dy * dy;
+        if (d2 < 22500 && d2 > 1) {
+          var d = Math.sqrt(d2);
+          var f = (150 - d) / 150;
+          p.x += (dx / d) * f * 1.6;
+          p.y += (dy / d) * f * 1.6;
         }
 
-        if (p.dead) {
-          /* Ghost: fade the dot out, then respawn a fresh one. */
-          var t = (Date.now() - p.fadeStart) / p.fadeMs;
-          if (t >= 1) {
-            var np = makeParticle(isMobile() ? 0.75 : 1);
-            for (var k in np) p[k] = np[k];
-            continue;
-          }
-          var base = p.alpha * (1 - t);
-          if (base <= 0.01) continue;   /* invisible this frame */
-          drawDot(p, base);
-          continue;
-        }
+        /* Never despawn: wrap around the edges so the population
+           stays constant and the screen never empties. */
+        if (p.x < -WRAP) p.x = W + WRAP;
+        else if (p.x > W + WRAP) p.x = -WRAP;
+        if (p.y < -WRAP) p.y = H + WRAP;
+        else if (p.y > H + WRAP) p.y = -WRAP;
 
-        drawDot(p, p.alpha);
+        drawDot(p);
       }
     } finally {
       /* Always reschedule, even if a frame threw — one bad particle
