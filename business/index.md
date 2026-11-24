@@ -30,9 +30,8 @@ description: Rease Kessler — independent software developer providing developm
 
 ## About
 
-Rease Kessler is an independent developer based in Charleston, West Virginia, building reliable tools, automations, and infrastructure for individuals and small teams. Available for consulting and freelance engagements.
+Rease Kessler is an independent developer building reliable tools, automations, and infrastructure for individuals and small teams. Available for consulting and freelance engagements.
 
 ## Contact
 
 - Email: [reasek@mit.edu](mailto:reasek@mit.edu)
-- Location: Charleston, West Virginia, United States

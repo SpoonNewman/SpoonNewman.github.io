@@ -1,12 +1,6 @@
-/* ============================================================
-   Rease Kessler — personal site styles
-   Theme tokens · layout · components · easter egg
-   ============================================================ */
-
-/* ---------- Theme tokens (light defaults) ---------- */
 :root {
-  --bg: #f8fafc;              /* page background (soft slate) */
-  --card: #ffffff;            /* card background */
+  --bg: #f8fafc;              
+  --card: #ffffff;            
   --text: #111827;
   --muted: #4b5563;
   --line: #e5e7eb;
@@ -14,7 +8,7 @@
   --link: #2563eb;
   --link-hover: #1d4ed8;
 
-  --accent: #7c3aed;          /* purple accent */
+  --accent: #7c3aed;          
   --accent-soft: #ede9fe;
 
   --header-bg: rgba(255, 255, 255, 0.82);
@@ -26,7 +20,7 @@
   --maxw: 760px;
 }
 
-/* Manual theme override via data-theme on <html> */
+
 html[data-theme="light"] {
   --bg: #f8fafc;
   --card: #ffffff;
@@ -63,7 +57,7 @@ html[data-theme="dark"] {
   --chip-line: rgba(167, 139, 250, 0.35);
 }
 
-/* No-JS fallback: respect the OS preference */
+
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #0f172a;
@@ -82,12 +76,12 @@ html[data-theme="dark"] {
   }
 }
 
-/* Easter egg tiny effect */
+
 html.egg {
   filter: hue-rotate(140deg);
 }
 
-/* ---------- Base ---------- */
+
 * {
   box-sizing: border-box;
 }
@@ -137,12 +131,12 @@ main {
   border-radius: 4px;
 }
 
-/* ---------- Header / nav ---------- */
+
 .site-header {
   position: sticky;
   top: 0;
   z-index: 500;
-  margin: 0 -1.25rem;                 /* bleed edge-to-edge on small screens */
+  margin: 0 -1.25rem;                 
   padding: 0.8rem 1.25rem;
   background: var(--header-bg);
   backdrop-filter: blur(10px);
@@ -218,10 +212,10 @@ main {
   top: 0.75rem;
 }
 
-/* ---------- Typography ---------- */
+
 h1, h2, h3 {
   line-height: 1.25;
-  scroll-margin-top: 5rem;            /* keep anchors clear of sticky header */
+  scroll-margin-top: 5rem;            
 }
 
 h1 {
@@ -264,7 +258,7 @@ strong {
   font-weight: 650;
 }
 
-/* ---------- Links ---------- */
+
 a {
   color: var(--link);
   text-decoration: none;
@@ -277,7 +271,7 @@ a:hover {
   text-underline-offset: 3px;
 }
 
-/* ---------- Blockquotes ---------- */
+
 blockquote {
   margin: 1.5rem 0;
   padding: 0.85rem 1.1rem;
@@ -295,7 +289,7 @@ blockquote p:last-child {
   margin-bottom: 0;
 }
 
-/* Hero tagline directly under the h1: clean italic, not a callout */
+
 main > h1 + blockquote {
   border: none;
   background: none;
@@ -309,7 +303,7 @@ main > h1 + blockquote p {
   color: var(--muted);
 }
 
-/* ---------- Callout note ---------- */
+
 .note {
   margin: 1.5rem 0;
   padding: 0.8rem 1.1rem;
@@ -327,7 +321,7 @@ main > h1 + blockquote p {
   color: var(--accent);
 }
 
-/* ---------- Hero art underlay (art as a layer below the text) ---------- */
+
 .hero-art-bg {
   position: absolute;
   z-index: -1;
@@ -363,7 +357,7 @@ html[data-theme="dark"] .hero-art-bg {
   color: var(--accent);
 }
 
-/* ---------- Project cards ---------- */
+
 .card {
   position: relative;
   isolation: isolate;
@@ -377,7 +371,7 @@ html[data-theme="dark"] .hero-art-bg {
   transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
 }
 
-/* Art underlay inside project cards (each card gets its own via --card-art) */
+
 .card::before {
   content: "";
   position: absolute;
@@ -394,9 +388,7 @@ html[data-theme="dark"] .card::before {
   opacity: 0.16;
 }
 
-/* Light mode uses pre-processed "light" variants of the art (background
-   mapped to pure white, ink kept dark) so underlays read as clean white
-   prints instead of the gray wash a CSS invert of the navy pieces gives. */
+
 html[data-theme="light"] .hero-art-bg {
   background-image: url("/assets/art/hero-light.webp");
 }
@@ -405,8 +397,7 @@ html[data-theme="light"] .card::before {
   background-image: var(--card-art-light, var(--card-art));
 }
 
-/* No-JS fallback: same light variants when the OS prefers light and no
-   manual theme override is set. */
+
 @media (prefers-color-scheme: light) {
   html:not([data-theme="dark"]) .hero-art-bg {
     background-image: url("/assets/art/hero-light.webp");
@@ -439,7 +430,7 @@ html[data-theme="light"] .card::before {
   margin-bottom: 0;
 }
 
-/* Status badge */
+
 .tag {
   display: inline-block;
   vertical-align: middle;
@@ -476,7 +467,7 @@ html[data-theme="dark"] .tag-archived {
   border-color: rgba(148, 163, 184, 0.25);
 }
 
-/* Tech chips */
+
 .tech {
   display: flex;
   flex-wrap: wrap;
@@ -495,7 +486,7 @@ html[data-theme="dark"] .tag-archived {
   font-size: 0.78rem;
 }
 
-/* Generic tag group (medical interests) */
+
 .tags {
   display: flex;
   flex-wrap: wrap;
@@ -509,7 +500,7 @@ html[data-theme="dark"] .tag-archived {
   padding: 0.3rem 0.75rem;
 }
 
-/* ---------- Lists ---------- */
+
 ul {
   padding-left: 1.25rem;
 }
@@ -524,7 +515,7 @@ hr {
   margin: 2rem 0;
 }
 
-/* ---------- Footer ---------- */
+
 .site-footer {
   margin-top: 4rem;
   padding: 1.5rem 0 0;
@@ -550,7 +541,7 @@ hr {
   margin-top: 0.5rem;
 }
 
-/* ---------- Responsive tweaks ---------- */
+
 @media (max-width: 520px) {
   .site-nav {
     gap: 0.75rem;
@@ -566,7 +557,7 @@ hr {
   }
 }
 
-/* ---------- Reduced motion ---------- */
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -575,15 +566,14 @@ hr {
     transition-duration: 0.01ms !important;
   }
 
-  /* Keep the easter egg's flash visible even for reduced-motion users:
-     it is a deliberate, brief overlay, not UI motion. */
+
   .egg-overlay,
   .egg-overlay * {
     animation-duration: 1400ms !important;
   }
 }
 
-/* ---------- Easter egg: 8-bit title overlay ---------- */
+
 .egg-overlay {
   position: fixed;
   inset: 0;
@@ -653,7 +643,7 @@ hr {
   opacity: 0.35;
 }
 
-/* ---------- SMS opt-in form ---------- */
+
 .optin-card {
   padding: 28px;
 }

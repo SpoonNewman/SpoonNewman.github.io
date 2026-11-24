@@ -14,13 +14,11 @@ description: I build projects to learn, explore ideas, and get better at writing
 
 ## About
 
-I build tools and projects that help me learn by doing. My recent work includes a Rust-based CLI tool, infrastructure experiments with Terraform and cloud APIs, and side explorations in C#. I enjoy digging into systems, understanding how things work under the hood, and gaining experience across different languages and environments.
+I build tools and projects that help me learn by doing. My recent work includes a Rust-based CLI tool, infrastructure experiments with Terraform and cloud APIs, and side explorations in C#.
 
 <div class="note">
-<p><strong>Note:</strong> At this time, while I still hold a passion for writing software, I am pursuing a separate career path.</p>
+<p><strong>Note:</strong> This site is a simple place to highlight a few projects and share what I'm learning. At this time, while I still hold a passion for writing software, I am pursuing a separate career path.</p>
 </div>
-
-> This site is a simple place to highlight a few projects and share what I'm learning.
 
 ## Projects
 
